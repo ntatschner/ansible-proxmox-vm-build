@@ -5,3 +5,6 @@ default_interface: net0
 default_volume: /dev/vda
 default_partition: 1
 template_name: "{{ os_template | default('CentOS-7-template') }}"
+vault_proxmox_user: "{{ proxmox_user }}"
+vault_proxmox_token_id: "{{ proxmox_token_id }}"
+vault_proxmox_api_key: "{{ proxmox_api_key }}"

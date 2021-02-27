@@ -3,4 +3,3 @@
   hosts: "{{ hostgroup | default('omit') }}"
   roles:
     - role-proxmox-clone-vm
-    #- role-create-ansible-user
