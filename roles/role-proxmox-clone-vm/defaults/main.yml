@@ -1,7 +1,7 @@
 ---
-VM_template: {{ os_template | default('CentOS-7-template') }}
+VM_template: "{{ os_template | default('CentOS-7-template') }}"
 default_disk: virtio0
 default_interface: net0
 default_volume: /dev/vda
 default_partition: 1
-template_name: {{ os_template | default('CentOS-7-template') }}
+template_name: "{{ os_template | default('CentOS-7-template') }}"
