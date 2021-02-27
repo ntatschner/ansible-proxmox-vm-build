@@ -8,4 +8,5 @@ template_name: "{{ os_template | default('CentOS-7-template') }}"
 vault_proxmox_user: "{{ proxmox_user }}"
 vault_proxmox_token_id: "{{ proxmox_token_id }}"
 vault_proxmox_api_key: "{{ proxmox_api_key }}"
+vault_api_password: "{{ api_password }}"
 proxmox_host: 192.168.0.250

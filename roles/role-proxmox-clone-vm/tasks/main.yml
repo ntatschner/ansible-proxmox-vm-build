@@ -3,8 +3,7 @@
 - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ VM_name }}"
   proxmox_kvm:
     api_user: "{{ vault_proxmox_user }}"
-    api_token_id: "{{ vault_proxmox_token_id }}"
-    api_token_secret: "{{ vault_proxmox_api_key }}"
+    api_password: secret
     api_host: "{{ proxmox_host }}"
     name: "{{ VM_name }}"
     node: "{{ proxmox_host }}"
