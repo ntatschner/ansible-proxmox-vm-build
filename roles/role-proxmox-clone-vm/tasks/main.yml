@@ -35,8 +35,3 @@
     timeout: 45
   when: wait.changed == true
   tags: provision
-
-- debug:
-    msg: "item.key {{ item.key }} item.value {{ item.value }} item.value.netmask {{ item.value.netmask }} item.value.vmbr {{ item.value.vmbr }}"
-  with_dict: "{{ vars[VM_network] }}"
-  tags: provision
