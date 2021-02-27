@@ -1,0 +1,3 @@
+---
+remote_ansible_group: ansiblessh
+ansible_user: tatux

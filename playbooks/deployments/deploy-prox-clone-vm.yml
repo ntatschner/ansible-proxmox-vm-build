@@ -1,0 +1,6 @@
+---
+- name: Deploy a new VM in Proxmox from a clone
+  hosts: localhost
+  roles:
+    - role-proxmox-clone-vm
+    - role-create-ansible-user

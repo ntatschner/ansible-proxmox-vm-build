@@ -1,0 +1,75 @@
+---
+- name: "Set job identifiers"
+  set_fact: 
+    template_name: "{{ tower_job_template_name | default('NaN') }}"
+    template_id: "{{ tower_job_template_id | default('x') }}"
+
+- block:
+  - name: query for {{ remote_ansible_group }} in group database
+    getent:
+      database: group
+      key: "{{ remote_ansible_group }}"
+    register: _getent_query
+    ignore_errors: yes
+
+  - name: Assert group {{ remote_ansible_group }} exists
+    assert:
+      that:
+        - _getent_query is failed
+      fail_msg: "There was a problem with the group lookup. This usually means {{ remote_ansible_group }} already exists."
+
+  - name: Add Ansible SSH group
+    group:
+      name: "{{ remote_ansible_group }}"
+      gid: '1111'
+      state: present
+
+  - name: "get the sshd_config content"
+    slurp:
+      src: "/etc/ssh/sshd_config"
+    register: _sshd_config_file
+
+  - name: "fetch the right line"
+    set_fact:
+      allowgroups_line: "{{ _sshd_config_file['content'] | b64decode | regex_search('AllowGroups.*')}}"
+  - name: "extract the groups"
+    set_fact:
+      allowed_groups: "{{ allowgroups_line.split()[1:-1] }}"
+
+  - name: "add the group to SSH AllowGroup"
+    lineinfile:
+      path: "/etc/ssh/sshd_config"
+      state: present
+      regexp: '(AllowGroups\s)(.*)'
+      line: '\1\2 {{ remote_ansible_group }}'
+      backrefs: yes
+      validate: sshd -t -f %s
+    when: remote_ansible_group not in allowed_groups
+    notify: reload-sshd
+
+  rescue:
+    - name: "Rescue Failure and Make Error Code"
+      set_fact:
+        work_notes: | 
+          Template: {{ template_name | default('NaN') }}
+          Task: {{ ansible_failed_task.name }}
+          Error: {{ ansible_failed_result }}
+        error_code: "{{ template_id | default('NaN') }}-{{ (ansible_failed_task.name | hash('md5'))[-4:] }}"
+    - debug: msg="error_message is {{error_code}}"
+    - debug: msg="Worknotes are {{ work_notes }}"
+
+- name: "Set Successful Worknotes"
+  set_fact:
+    work_notes: "Ansible Automation Successful"
+    error_code: "{{ template_id }}-000"
+  when:
+    - error_code is undefined
+
+- name: Telegram notification
+  telegram:
+    token: "{{ telegram_token }}"
+    chat_id: "{{ telegram_chat_id }}"
+    msg: |
+      Adding user {{ remote_ansible_group }} added to to {{ inventory_hostname_short }}
+      {{ work_notes }}
+      - Tatux Bot
