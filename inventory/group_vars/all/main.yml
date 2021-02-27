@@ -1,0 +1,4 @@
+---
+proxmox_host: 192.168.0.250
+proxmox_user:
+proxmox_api_key:
