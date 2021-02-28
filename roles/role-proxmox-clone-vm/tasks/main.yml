@@ -4,9 +4,9 @@
   proxmox_kvm:
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
-    api_host: "{{ proxmox_host }}"
+    api_host: "TheIntersect"
     name: "{{ VM_name }}"
-    node: "{{ proxmox_host }}"
+    node: "TheIntersect"
     clone: "{{ VM_template }}"
     timeout: 300
   tags: provision,test
@@ -20,9 +20,9 @@
   proxmox_kvm:
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
-    api_host: "{{ proxmox_host }}"
+    api_host: "TheIntersect"
     name: "{{ VM_name }}"
-    node: "{{ proxmox_host }}"
+    node: "TheIntersect"
     state: started
     timeout: 300
   register: wait
