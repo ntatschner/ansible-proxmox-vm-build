@@ -70,4 +70,4 @@
 
 - name: Display VM IP
   debug:
-    var: _output_vm_id
+    var: "{{ _output_vm_id | to_ymal }}"
