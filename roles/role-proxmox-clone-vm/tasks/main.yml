@@ -7,6 +7,7 @@
     api_host: "TheIntersect"
     name: "{{ VM_name }}"
     node: "TheIntersect"
+    storage: "biglocal"
     clone: "{{ VM_template }}"
     timeout: 300
   tags: provision,test
@@ -23,6 +24,7 @@
     api_host: "TheIntersect"
     name: "{{ VM_name }}"
     node: "TheIntersect"
+    storage: "biglocal"
     state: started
     timeout: 300
   register: wait
