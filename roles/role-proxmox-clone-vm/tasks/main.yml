@@ -57,6 +57,10 @@
   vars:
     regexp: 'vmid = (\d*)'
 
+- name: Display VM ID
+  debug:
+    var: _vmid
+
 - name: get IP
   shell: "qm guest cmd {{ _vmid }} network-get-interfaces"
   register: _output_vm_ip
