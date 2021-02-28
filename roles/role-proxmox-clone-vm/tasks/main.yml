@@ -63,8 +63,8 @@
 
 - name: get IP
   shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
-  args:
-    executable: /bin/bash
+  # args:
+  #   executable: /bin/bash
   register: _output_vm_ip
 
 - name: Display VM IP
