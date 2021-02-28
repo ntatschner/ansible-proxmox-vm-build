@@ -50,3 +50,17 @@
 - name: Return VM details
   debug:
     var: _current_state
+
+- name: Get New VM ID
+  set_fact:
+    _vmid: "{{ _current_state[msg] | regext_search(regexp,'\\1') | second }}"
+  vars:
+    regexp: 'vmid = (\d*)'
+
+- name: get IP
+  shell: "qm guest cmd {{ _vmid }} network-get-interfaces"
+  register: _output_vm_ip
+
+- name: Display VM IP
+  debug:
+    var: _output_vm_id
