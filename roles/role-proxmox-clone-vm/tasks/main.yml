@@ -35,3 +35,18 @@
     timeout: 45
   when: wait.changed == true
   tags: provision
+
+- name: starting new Virtual Machine to change IPv4 configuration, it is necessary
+  proxmox_kvm:
+    api_user: "{{ vault_proxmox_user }}"
+    api_password: "{{ vault_api_password }}"
+    api_host: "TheIntersect"
+    name: "{{ VM_name }}"
+    node: "TheIntersect"
+    storage: "biglocal"
+    state: current
+  register: _current_state
+
+- name: Return VM details
+  debug:
+    var: _current_state
