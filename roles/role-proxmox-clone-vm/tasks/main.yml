@@ -62,7 +62,7 @@
     var: _vmid
 
 - name: get IP
-  shell: "qm guest cmd {{ _vmid }} network-get-interfaces"
+  shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
   register: _output_vm_ip
 
 - name: Display VM IP
