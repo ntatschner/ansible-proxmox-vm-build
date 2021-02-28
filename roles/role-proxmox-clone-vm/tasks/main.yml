@@ -53,7 +53,7 @@
 
 - name: Get New VM ID
   set_fact:
-    _vmid: "{{ _current_state[msg] | regext_search(regexp,'\\1') | first }}"
+    _vmid: "{{ _current_state[msg] | regex_search(regexp,'\\1') | first }}"
   vars:
     regexp: 'vmid = (\d*)'
 
