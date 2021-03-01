@@ -8,6 +8,17 @@
     name: "{{ VM_name }}"
     node: "TheIntersect"
     storage: "biglocal"
+    ostype: "l26"
+    balloon: "1024"
+    onboot: Yes
+    localtime: Yes
+    agent: Yes
+    description: "Created With Ansible on: {{ ansible_date_time }} by: {{ tower_user_name }}."
+    nameservers:
+      - '192.168.0.1'
+      - '1.1.1.1'
+      - '8.8.8.8'
+    pool: "Playground"
     clone: "{{ VM_template }}"
     timeout: 300
   tags: provision,test
@@ -24,7 +35,6 @@
     api_host: "TheIntersect"
     name: "{{ VM_name }}"
     node: "TheIntersect"
-    storage: "biglocal"
     state: started
     timeout: 300
   register: wait
@@ -36,30 +46,21 @@
   when: wait.changed == true
   tags: provision
 
-- name: Getting the VM state
+- name: Getting the VM state to get the new VMs ID
   proxmox_kvm:
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
     api_host: "TheIntersect"
     name: "{{ VM_name }}"
     node: "TheIntersect"
-    storage: "biglocal"
     state: current
   register: _current_state
-
-- name: Return VM details
-  debug:
-    var: _current_state
 
 - name: Get New VM ID
   set_fact:
     _vmid: "{{ _current_state.msg | regex_search(regexp,'\\1') | first }}"
   vars:
     regexp: 'vmid = (\d*)'
-
-- name: Display VM ID
-  debug:
-    var: _vmid
 
 - name: get IP
   shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
