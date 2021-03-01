@@ -75,4 +75,4 @@
 
 - name: Display VM IP
   debug:
-    var: _ip_parse
+    var: _ip_parse[2]
