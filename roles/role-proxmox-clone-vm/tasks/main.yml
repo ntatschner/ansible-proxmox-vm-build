@@ -1,11 +1,11 @@
 ---
 # Clone New VM from template in Proxmox
-- name: Cloning virtual machine from "{{ VM_template }}" with name "{{ VM_name }}"
+- name: Cloning virtual machine from "{{ VM_template }}" with name "{{ vm_name_nt }}"
   proxmox_kvm:
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
     api_host: "TheIntersect"
-    name: "{{ VM_name }}"
+    name: "{{ vm_name_nt }}"
     node: "TheIntersect"
     storage: "biglocal"
     ostype: "l26"
@@ -29,7 +29,7 @@
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
     api_host: "TheIntersect"
-    name: "{{ VM_name }}"
+    name: "{{ vm_name_nt }}"
     node: "TheIntersect"
     state: started
     timeout: 300
@@ -38,7 +38,7 @@
 
 - name: Waiting to start VM completely
   wait_for:
-    timeout: 45
+    timeout: 120
   when: wait.changed == true
   tags: provision
 
@@ -47,7 +47,7 @@
     api_user: "{{ vault_proxmox_user }}"
     api_password: "{{ vault_api_password }}"
     api_host: "TheIntersect"
-    name: "{{ VM_name }}"
+    name: "{{ vm_name_nt }}"
     node: "TheIntersect"
     state: current
   register: _current_state
@@ -61,8 +61,6 @@
 - name: get IP
   shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
   become: True
-  # args:
-  #   executable: /bin/bash
   register: _output_vm_ip
 
 - set_fact:
