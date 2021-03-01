@@ -13,7 +13,7 @@
     onboot: Yes
     localtime: Yes
     agent: Yes
-    description: "Created With Ansible on: {{ ansible_date_time }} by: {{ tower_user_name }}."re
+    description: "Created With Ansible on: {{ ansible_date_time }} by: {{ tower_user_name }}."
     pool: "Playground"
     clone: "{{ VM_template }}"
     timeout: 300
