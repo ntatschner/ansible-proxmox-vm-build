@@ -1,0 +1,170 @@
+---
+- name: Deploy a new VM in Proxmox from a clone
+  hosts: "{{ hostgroup | default('omit') }}"
+  tasks:
+  # Clone New VM from template in Proxmox
+  - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ vm_name_nt }}"
+    proxmox_kvm:
+      api_user: "{{ vault_proxmox_user }}"
+      api_password: "{{ vault_api_password }}"
+      api_host: "TheIntersect"
+      name: "{{ vm_name_nt }}"
+      node: "TheIntersect"
+      storage: "biglocal"
+      ostype: "l26"
+      balloon: "1024"
+      onboot: Yes
+      localtime: Yes
+      agent: Yes
+      description: "Created With Ansible on: {{ ansible_date_time }} by: {{ tower_user_name }}."
+      pool: "Playground"
+      clone: "{{ VM_template }}"
+      timeout: 300
+    tags: provision,test
+
+  - name: Waiting to apply cloud init changes in disk
+    wait_for:
+      timeout: 5
+    tags: provision
+
+  - name: Start the VM
+    proxmox_kvm:
+      api_user: "{{ vault_proxmox_user }}"
+      api_password: "{{ vault_api_password }}"
+      api_host: "TheIntersect"
+      name: "{{ vm_name_nt }}"
+      node: "TheIntersect"
+      state: started
+      timeout: 300
+    register: wait
+    tags: provision
+
+  - name: Waiting to start VM completely
+    wait_for:
+      timeout: 120
+    when: wait.changed == true
+    tags: provision
+
+  - name: Getting the VM state to get the new VMs ID
+    proxmox_kvm:
+      api_user: "{{ vault_proxmox_user }}"
+      api_password: "{{ vault_api_password }}"
+      api_host: "TheIntersect"
+      name: "{{ vm_name_nt }}"
+      node: "TheIntersect"
+      state: current
+    register: _current_state
+
+  - name: Get New VM ID
+    set_fact:
+      _vmid: "{{ _current_state.msg | regex_search(regexp,'\\1') | first }}"
+    vars:
+      regexp: 'vmid = (\d*)'
+
+  - name: get IP
+    shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
+    become: True
+    register: _output_vm_ip
+
+  - set_fact:
+      _ip_parse: "{{ _output_vm_ip.stdout | regex_findall(regexp,'\\1') | reject('search', '127.0.0.1') | list }}"
+    vars:
+      regexp: '"ip-address" : "(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' 
+
+  - add_host:
+      name: '{{ _ip_parse | first }}'
+      groups: "playground"
+
+  - name: Setup host for ansible
+    hosts: '{{ _ip_parse | first }}'
+    become: Yes
+    become_user: tatux
+    vars_files:
+      - vault_vars.yml
+    vars:
+      ansible_become_pass: "{{ initial_setup_password }}"
+    tasks:
+    - name: "Set job identifiers"
+      set_fact: 
+        template_name: "{{ tower_job_template_name | default('NaN') }}"
+        template_id: "{{ tower_job_template_id | default('x') }}"
+    - name: Ansible Config
+      block:
+      - name: query for {{ remote_ansible_user }} in passwd database
+        getent:
+          database: passwd
+          key: "{{ remote_ansible_user }}"
+        register: _getent_query
+        ignore_errors: yes
+
+      - name: Assert user {{ remote_ansible_user }} exists
+        assert:
+          that:
+            - _getent_query is failed
+          fail_msg: "There was a problem with the username lookup. This usually means {{ remote_ansible_user }} is already in-use."
+
+      - name: Create ansible user - CentOS
+        become: true
+        user:
+          name: "{{ remote_ansible_user }}"
+          comment: "Ansible User Account"
+          groups: ansiblessh
+          password: "{{ remote_ansible_user_password | password_hash('sha512') }}"
+          state: present
+        when: ansible_facts['distribution'] == "CentOS"
+      
+      - name: Create ansible user - Ubuntu
+        become: true
+        user:
+          name: "{{ remote_ansible_user }}"
+          comment: "Ansible User Account"
+          groups: ansiblessh
+          password: "{{ remote_ansible_user_password | password_hash('sha512') }}"
+          state: present
+        register: _new_user
+        when: ansible_facts['distribution'] == "Ubuntu" or "Debian"
+
+      - name: add authorized key to user
+        authorized_key:
+          user: "{{ remote_ansible_user }}"
+          state: present
+          manage_dir: yes
+          key: "{{ remote_ansible_user_publickey }}"
+        when: _new_user is not failed
+
+      - name: Add {{ remote_ansible_user }} to sudoers in the /etc/sudoers.d/ directory
+        lineinfile:
+          path: "/etc/sudoers.d/{{ remote_ansible_user }}"
+          line: '{{ remote_ansible_user }} ALL=(ALL) NOPASSWD: ALL'
+          state: present
+          mode: 0440
+          create: yes
+          validate: 'visudo -cf %s'
+
+      rescue:
+        - name: "Rescue Failure and Make Error Code"
+          set_fact:
+            work_notes: | 
+              Template: {{ template_name | default('NaN') }}
+              Task: {{ ansible_failed_task.name }}
+              Error: {{ ansible_failed_result }}
+            error_code: "{{ template_id | default('NaN') }}-{{ (ansible_failed_task.name | hash('md5'))[-4:] }}"
+        - debug: msg="error_message is {{error_code}}"
+        - debug: msg="Worknotes are {{ work_notes }}"
+
+    - name: "Set Successful Worknotes"
+      set_fact:
+        work_notes: "Ansible Automation Successful"
+        error_code: "{{ template_id }}-000"
+      when:
+        - error_code is undefined
+
+    - name: Telegram notification
+      telegram:
+        token: "{{ telegram_token }}"
+        chat_id: "{{ telegram_chat_id }}"
+        msg: |
+          Adding user {{ remote_ansible_user }} to {{ inventory_hostname_short }}
+          {{ work_notes }}
+          - Tatux Bot
+
