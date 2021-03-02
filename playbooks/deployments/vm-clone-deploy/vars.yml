@@ -12,4 +12,5 @@ vault_api_password: "{{ api_password }}"
 proxmox_host: 192.168.0.250
 vm_name_nt: "{{ VM_name }}"
 initial_setup_user: tatux
-initial_setup_password: "{{ vault_initial_setup_password }}"
+initial_setup_password: "{{ setup_password }}"
+remote_ansible_group: ansiblessh
