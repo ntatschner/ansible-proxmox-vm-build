@@ -71,3 +71,8 @@
 - add_host:
     name: '{{ _ip_parse | first }}'
     groups: "playground"
+
+- name: Setup host for ansible
+  hosts: '{{ _ip_parse | first }}'
+  become: true
+  
