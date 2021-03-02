@@ -2,6 +2,15 @@
 - name: Deploy a new VM in Proxmox from a clone
   hosts: "{{ hostgroup | default('omit') }}"
   tasks:
+  - name: test paths
+    find:
+      paths: /mnt/shared_data
+      recurse: Yes
+    register: _files
+    delegate_to: localhost
+  - name: Debug
+    debug:
+      var: _files
   # Clone New VM from template in Proxmox
   - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ vm_name_nt }}"
     proxmox_kvm:
