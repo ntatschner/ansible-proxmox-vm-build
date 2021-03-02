@@ -1,6 +1,7 @@
 ---
 - name: test paths
   hosts: localhost
+  tasks:
   - name: Paths
     find:
       paths: /mnt/shared_data
