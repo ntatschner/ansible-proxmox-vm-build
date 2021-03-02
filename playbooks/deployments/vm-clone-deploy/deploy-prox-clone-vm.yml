@@ -1,6 +1,6 @@
 ---
 - name: test paths
-  hosts: localhost
+  hosts: 127.0.0.1
   tasks:
   - name: Paths
     find:
@@ -90,7 +90,7 @@
       groups: "playground"
 
 - name: Setup host for ansible
-  hosts: '{{ _ip_parse | first }}'
+  hosts: 'hostvars["{{ hostgroup | default('omit') }}"][{{ _ip_parse | first }}]'
   become: Yes
   become_user: tatux
   vars_files:
