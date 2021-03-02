@@ -11,7 +11,7 @@
     debug:
       var: _files
 - name: Deploy a new VM in Proxmox from a clone
-  hosts: "{{ hostgroup | default('omit') }}"
+  hosts: 192.168.0.250
   vars_files:
     - vault_vars.yml
     - vars.yml
@@ -90,7 +90,7 @@
       groups: "playground"
 
 - name: Setup host for ansible
-  hosts: "{{ hostvars['{{ hostgroup | default('omit') }}']['{{ _ip_parse | first }}'] }}"
+  hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
   become: Yes
   become_user: tatux
   vars_files:
