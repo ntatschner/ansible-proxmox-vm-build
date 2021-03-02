@@ -141,6 +141,17 @@
           create: yes
           validate: 'visudo -cf %s'
 
+      - name: Install Cockpit
+        apt: 
+          name: cockpit
+          state: present
+        when: ansible_facts['distribution'] == "Ubuntu" or "Debian"
+
+      - name: Install Cockpit
+        apt: 
+          name: cockpit
+          state: present
+        when: ansible_facts['distribution'] == "CentOS"
       rescue:
         - name: "Rescue Failure and Make Error Code"
           set_fact:
