@@ -90,7 +90,7 @@
       groups: "playground"
 
 - name: Setup host for ansible
-  hosts: 'hostvars["{{ hostgroup | default('omit') }}"][{{ _ip_parse | first }}]'
+  hosts: "{{ hostvars['{{ hostgroup | default('omit') }}']['{{ _ip_parse | first }}'] }}"
   become: Yes
   become_user: tatux
   vars_files:
