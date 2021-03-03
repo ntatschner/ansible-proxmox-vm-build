@@ -119,7 +119,7 @@
 
   - name: Enable Cockpit
     systemd:
-      name: cockpit
+      name: cockpit.socket
       enabled: Yes
       state: reloaded
 
