@@ -132,6 +132,20 @@
       option: ProtocolHeader
       value: X-Forwarded-Proto
 
+  - name: Edit Cockpit config - LoginTitle
+    ini_file:
+      path: /etc/cockpit/cockpit.conf
+      section: WebService
+      option: LoginTitle
+      value: "Welcome to your VM, supplied by the fabulious Nigel Tatschner"
+
+  - name: Edit Cockpit config - AllowUnencrypted
+    ini_file:
+      path: /etc/cockpit/cockpit.conf
+      section: WebService
+      option: AllowUnencrypted
+      value: true
+
   - name: Restart Cockpit Service
     systemd:
       name: cockpit
