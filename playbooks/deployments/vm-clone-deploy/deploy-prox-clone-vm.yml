@@ -117,7 +117,21 @@
     systemd:
       name: cockpit
       enabled: Yes
-      state: restarted
+      state: started
+
+  - name: Edit Cockpit config - Origin
+    ini_file:
+      path: /etc/cockpit/cockpit.conf
+      section: WebService
+      option: Origins
+      value: "{{ tower_user_name }}.tatux.in"
+
+  - name: Edit Cockpit config - ProtocolHeader
+    ini_file:
+      path: /etc/cockpit/cockpit.conf
+      section: WebService
+      option: ProtocolHeader
+      value: X-Forwarded-Proto
 
   - name: Add Ansible SSH group
     group:
@@ -178,6 +192,7 @@
       _ip_address: "{{ hostvars['192.168.0.250']._ip_parse }}"
 
   - name: Creating inbound rules for Traefik Proxy
+    become: Yes
     template:
       src: traefik-rules-file.j2
       dest: "/mnt/shared_data/{{ tower_user_name }}.yml"
