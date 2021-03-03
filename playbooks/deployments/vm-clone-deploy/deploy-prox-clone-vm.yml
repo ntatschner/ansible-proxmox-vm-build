@@ -7,12 +7,12 @@
     - vars.yml
   tasks:
   # Clone New VM from template in Proxmox
-  - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ vm_name_nt }}"
+  - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ tower_user_id }}"
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ vm_name_nt }}"
+      name: "{{ tower_user_id }}"
       node: "TheIntersect"
       storage: "biglocal"
       ostype: "l26"
@@ -36,7 +36,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ vm_name_nt }}"
+      name: "{{ tower_user_id }}"
       node: "TheIntersect"
       state: started
       timeout: 300
@@ -54,7 +54,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ vm_name_nt }}"
+      name: "{{ tower_user_id }}"
       node: "TheIntersect"
       state: current
     register: _current_state
@@ -81,7 +81,7 @@
       
   - name: Setting somemore facts
     set_fact:
-      vm_name: "{{ vm_name_nt }}"
+      vm_name: "{{ tower_user_id }}"
 
 - name: Setup host for external access
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
@@ -121,6 +121,41 @@
       enabled: Yes
       state: started
 
+  - name: Add Ansible SSH group
+    group:
+      name: "{{ remote_ansible_group }}"
+      gid: '1111'
+      state: present
+
+  - name: "get the sshd_config content"
+    slurp:
+      src: "/etc/ssh/sshd_config"
+    register: _sshd_config_file
+
+  - name: "fetch the right line"
+    set_fact:
+      allowgroups_line: "{{ _sshd_config_file['content'] | b64decode | regex_search('AllowGroups.*')}}"
+  - name: "extract the groups"
+    set_fact:
+      allowed_groups: "{{ allowgroups_line.split()[1:-1] }}"
+
+  - name: "add the group to SSH AllowGroup"
+    lineinfile:
+      path: "/etc/ssh/sshd_config"
+      state: present
+      regexp: '(AllowGroups\s)(.*)'
+      line: '\1\2 {{ remote_ansible_group }}'
+      backrefs: yes
+      validate: sshd -t -f %s
+
+  - name: Create local user
+    user:
+      name: "{{ tower_user_id }}"
+      comment: "VM owners account"
+      groups: "{{ remote_ansible_group }}"
+      password: "{{ _awx_vm_password | password_hash('sha512') }}"
+      state: present
+
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
   become: Yes
@@ -130,7 +165,7 @@
     name: nikola
     uid: 1001
     state: present
-    
+
   - name: Template IP output
     set_fact:
       _ip_address: "{{ hostvars['192.168.0.250']._ip_parse }}"
