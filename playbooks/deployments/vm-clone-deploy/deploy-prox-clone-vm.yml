@@ -129,5 +129,3 @@
     template:
       src: traefik-rules-file.j2
       dest: "/mnt/shared_data/{{ VM_name }}.yml"
-      owner: nikola
-      mode: '0744'
