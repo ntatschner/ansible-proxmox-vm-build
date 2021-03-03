@@ -123,32 +123,6 @@
       state: present
       update_cache: Yes
     when: ansible_facts['distribution'] == "CentOS"
-  rescue:
-    - name: "Rescue Failure and Make Error Code"
-      set_fact:
-        work_notes: | 
-          Template: {{ template_name | default('NaN') }}
-          Task: {{ ansible_failed_task.name }}
-          Error: {{ ansible_failed_result }}
-        error_code: "{{ template_id | default('NaN') }}-{{ (ansible_failed_task.name | hash('md5'))[-4:] }}"
-    - debug: msg="error_message is {{error_code}}"
-    - debug: msg="Worknotes are {{ work_notes }}"
-
-- name: "Set Successful Worknotes"
-  set_fact:
-    work_notes: "Ansible Automation Successful"
-    error_code: "{{ template_id }}-000"
-  when:
-    - error_code is undefined
-
-- name: Telegram notification
-  telegram:
-    token: "{{ telegram_token }}"
-    chat_id: "{{ telegram_chat_id }}"
-    msg: |
-      Adding user {{ remote_ansible_user }} to {{ inventory_hostname_short }}
-      {{ work_notes }}
-      - Tatux Bot
 
 - name: Creating inbound rules for Traefik Proxy
   template:
