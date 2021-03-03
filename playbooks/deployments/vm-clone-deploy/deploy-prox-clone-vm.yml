@@ -78,10 +78,6 @@
   - add_host:
       name: '{{ _ip_parse | first }}'
       groups: "playground"
-      
-  - name: Setting somemore facts
-    set_fact:
-      vm_name: "{{ tower_user_id }}"
 
 - name: Setup host for external access
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
@@ -161,10 +157,10 @@
   become: Yes
   tasks:
   - name: Create NFS user
-  user:
-    name: nikola
-    uid: 1001
-    state: present
+    user:
+      name: nikola
+      uid: 1001
+      state: present
 
   - name: Template IP output
     set_fact:
