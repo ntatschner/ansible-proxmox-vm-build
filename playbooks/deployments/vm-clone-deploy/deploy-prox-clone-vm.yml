@@ -92,7 +92,7 @@
     debug:
       var: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
 - name: Setup host for ansible
-  hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+  hosts: "{{ hostvars['192.168.0.250']["{{ _ip_parse }}"] }}"
   become: Yes
   become_user: tatux
   vars_files:
