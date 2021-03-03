@@ -92,7 +92,10 @@
   - add_host:
       name: '{{ _ip_parse | first }}'
       groups: "playground"
-
+      
+  - name: Setting somemore facts
+    set_fact:
+      vm_name: "{{ vm_name_nt }}"
 
 - name: Setup host for external access
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
@@ -135,10 +138,12 @@
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
   become: Yes
+  vars:
+    vm_name: "{{ hostvars['192.168.0.250']['vm_name'] }}"
   tasks:
   - name: Creating inbound rules for Traefik Proxy
     template:
       src: traefik-rules-file.j2
-      dest: "/mnt/shared_data/{{ vm_name_nt }}.yml"
+      dest: "/mnt/shared_data/{{ vm_name }}.yml"
       owner: nikola
       mode: '0744'
