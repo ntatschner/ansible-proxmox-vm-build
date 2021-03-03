@@ -1,18 +1,4 @@
 ---
-- name: test paths
-  hosts: 127.0.0.1
-  become: Yes
-  tasks:
-  - name: Paths
-    find:
-      paths: /mnt/shared_data
-      recurse: Yes
-    register: _files
-
-  - name: Debug
-    debug:
-      var: _files
-
 - name: Deploy a new VM in Proxmox from a clone
   hosts: 192.168.0.250
   gather_facts: yes
