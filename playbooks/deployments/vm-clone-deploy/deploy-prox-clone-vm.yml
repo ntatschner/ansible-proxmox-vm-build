@@ -88,10 +88,10 @@
   - add_host:
       name: '{{ _ip_parse | first }}'
       groups: "playground"
-      
+
   - name: sdfsdf
     debug:
-      var: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+      var: "{{ hostvars['192.168.0.250'] }}"
 
 - name: Setup host for ansible
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
