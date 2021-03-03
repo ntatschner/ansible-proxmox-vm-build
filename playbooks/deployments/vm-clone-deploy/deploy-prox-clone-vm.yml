@@ -117,7 +117,6 @@
     systemd:
       name: cockpit
       enabled: Yes
-      state: started
 
   - name: Edit Cockpit config - Origin
     ini_file:
@@ -133,6 +132,12 @@
       option: ProtocolHeader
       value: X-Forwarded-Proto
 
+  - name: Restart Cockpit Service
+    systemd:
+      name: cockpit
+      enabled: Yes
+      state: restarted
+
   - name: Add Ansible SSH group
     group:
       name: "{{ remote_ansible_group }}"
@@ -144,7 +149,7 @@
       src: "/etc/ssh/sshd_config"
     register: _sshd_config_file
 
-  - name: "fetch the right line"
+  - name: "Grab the right line of the sshd_config file"
     set_fact:
       allowgroups_line: "{{ _sshd_config_file['content'] | b64decode | regex_search('AllowGroups.*')}}"
   - name: "extract the groups"
