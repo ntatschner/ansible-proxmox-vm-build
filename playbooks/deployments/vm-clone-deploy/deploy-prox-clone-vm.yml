@@ -101,6 +101,8 @@
   vars_files:
     - vault_vars.yml
     - vars.yml
+  vars:
+    vm_name_nt: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
   tasks:
   - name: Wait for SSH to be ready (Max 10 minutes)
     wait_for_connection:
