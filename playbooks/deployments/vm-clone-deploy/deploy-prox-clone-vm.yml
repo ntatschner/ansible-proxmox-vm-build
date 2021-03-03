@@ -8,11 +8,10 @@
       paths: /mnt/shared_data
       recurse: Yes
     register: _files
+    
   - name: Debug
     debug:
       var: _files
-
-  - meta: end_play
 
 - name: Deploy a new VM in Proxmox from a clone
   hosts: 192.168.0.250
