@@ -111,18 +111,20 @@
     setup:
 
   - name: Install Cockpit
-    dnf: 
+    yum: 
       name: cockpit
       state: present
       update_cache: Yes
-    when: ansible_facts['distribution'] == "CentOS"
+    when: 
+      - ansible_facts['distribution'] == "CentOS"
 
   - name: Install Cockpit
     apt: 
       name: cockpit
       state: present
       update_cache: Yes
-    when: ansible_facts['distribution'] == "Ubuntu" or "Debian"
+    when: 
+      - ansible_facts['distribution'] == "Ubuntu" or "Debian"
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
