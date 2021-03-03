@@ -13,3 +13,8 @@ proxmox_host: 192.168.0.250
 initial_setup_user: tatux
 initial_setup_password: "{{ setup_password }}"
 remote_ansible_group: ansiblessh
+smtp_hostname: mail.tatux.co.uk
+smtp_username: awx_notifier@tatux.co.uk
+smtp_from: awx_notifier@tatux.co.uk
+smtp_port: 587
+smtp_password: "{{ vault_smtp_password }}"
