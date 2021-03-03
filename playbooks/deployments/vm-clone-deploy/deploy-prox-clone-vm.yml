@@ -223,3 +223,16 @@
       src: traefik-rules-file.j2
       dest: "/mnt/shared_data/{{ tower_user_name }}.yml"
       mode: 0760
+
+  - name: "Email VM details"
+    mail:
+      host: "{{ smtp_hostname }}"
+      username: "{{ smtp_username }}"
+      password: "{{ smtp_password }}"
+      port: "{{ smtp_port }}"
+      to: "{{ _awx_email_address }}"
+      from: "{{ smtp_username }}"
+      subject: "VM Management Alerts"
+      body: "{{ lookup('template', 'email-template.j2') }}"
+    delegate_to: localhost
+    no_log: true

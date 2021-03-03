@@ -1,0 +1,15 @@
+Hey {{ tower_user_first_name }},
+
+Your VM has been {{ tower_user_name }} created,
+
+Here are the details;
+
+Username: {{ tower_user_name }}
+
+IP address: {{ _ip_address | join(', ') }}
+External Management URL: https://{{ tower_user_name }}.tatux.in
+
+Kind Regards,
+
+Nigel Tatschner
+Via Ansible/Proxmox/Traefik
