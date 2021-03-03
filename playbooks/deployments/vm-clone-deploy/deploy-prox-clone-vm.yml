@@ -124,10 +124,13 @@
       update_cache: Yes
     when: ansible_facts['distribution'] == "CentOS"
 
-- name: Creating inbound rules for Traefik Proxy
-  template:
-    src: traefik-rules-file.j2
-    dest: "/mnt/shared_data/{{ vm_name_nt }}.yml"
-    owner: nikola
-    group: wheel
-    mode: '0744'
+- name: Configure access to new VM via Traefik
+  hosts: 127.0.0.1
+  become: Yes
+  tasks:
+  - name: Creating inbound rules for Traefik Proxy
+    template:
+      src: traefik-rules-file.j2
+      dest: "/mnt/shared_data/{{ vm_name_nt }}.yml"
+      owner: nikola
+      mode: '0744'
