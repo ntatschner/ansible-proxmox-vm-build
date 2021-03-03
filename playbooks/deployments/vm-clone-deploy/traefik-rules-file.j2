@@ -15,4 +15,4 @@ http:
       loadBalancer:
         passHostHeader: true
         servers:
-          - url: "http://{{ _ip_address }}:9090"
+          - url: "http://{{ _ip_address | from_json }}:9090"
