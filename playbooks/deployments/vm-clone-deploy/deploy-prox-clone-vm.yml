@@ -171,3 +171,4 @@
     template:
       src: traefik-rules-file.j2
       dest: "/mnt/shared_data/{{ tower_user_name }}.yml"
+      owner: nikola
