@@ -1,6 +1,6 @@
 ---
 - name: test paths
-  hosts: 127.0.0.1
+  hosts: localhost
   tasks:
   - name: Paths
     find:
@@ -12,6 +12,7 @@
       var: _files
 - name: Deploy a new VM in Proxmox from a clone
   hosts: 192.168.0.250
+  gather_facts: yes
   vars_files:
     - vault_vars.yml
     - vars.yml
@@ -95,6 +96,7 @@
 
 - name: Setup host for ansible
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+  gather_facts: yes
   become: Yes
   become_user: tatux
   vars_files:
