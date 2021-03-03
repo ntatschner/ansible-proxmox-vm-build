@@ -99,8 +99,9 @@
     yum: 
       name: cockpit
       state: present
-      lock_timeout: 120
       update_cache: Yes
+    register: _app_wait
+    until: _app_wait.stdout != 
     when: 
       - ansible_distribution == "CentOS"
 
@@ -152,6 +153,15 @@
       groups: "{{ remote_ansible_group }}"
       password: "{{ _awx_vm_password | password_hash('sha512') }}"
       state: present
+
+  - name: Add {{ tower_user_name }} to sudoers in the /etc/sudoers.d/ directory
+    lineinfile:
+      path: "/etc/sudoers.d/{{ tower_user_name }}"
+      line: '{{ tower_user_name }} ALL=(ALL) NOPASSWD: ALL'
+      state: present
+      mode: 0440
+      create: yes
+      validate: 'visudo -cf %s'
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
