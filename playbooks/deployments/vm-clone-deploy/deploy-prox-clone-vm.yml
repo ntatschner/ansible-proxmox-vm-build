@@ -124,7 +124,7 @@
       path: /etc/cockpit/cockpit.conf
       section: WebService
       option: Origins
-      value: "https://{{ tower_user_name }}.tatux.in"
+      value: "https://{{ tower_user_name }}.tatux.in wss://{{ tower_user_name }}.tatux.in"
 
   - name: Edit Cockpit config - ProtocolHeader
     ini_file:
