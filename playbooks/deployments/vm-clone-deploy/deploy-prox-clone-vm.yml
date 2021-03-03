@@ -76,6 +76,11 @@
     vars:
       regexp: 'vmid = (\d*)'
 
+  - name: Wait for SSH to be ready (Max 10 minutes)
+    wait_for_connection:
+      delay: 60
+      sleep: 5
+
   - name: get IP
     shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
     become: True
@@ -89,10 +94,6 @@
   - add_host:
       name: '{{ _ip_parse | first }}'
       groups: "playground"
-
-  - name: sdfsdf
-    debug:
-      var: "{{ hostvars['192.168.0.250'] }}"
 
 - name: Setup host for ansible
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
