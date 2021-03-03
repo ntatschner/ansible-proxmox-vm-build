@@ -121,14 +121,14 @@
       enabled: Yes
       state: started
 
-- name: Template IP output
-  set_fact:
-    _ip_address: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
-
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
   become: Yes
   tasks:
+  - name: Template IP output
+    set_fact:
+      _ip_address: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+      
   - name: Creating inbound rules for Traefik Proxy
     template:
       src: traefik-rules-file.j2
