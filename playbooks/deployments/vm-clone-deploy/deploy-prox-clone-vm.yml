@@ -141,6 +141,6 @@
   - name: Creating inbound rules for Traefik Proxy
     template:
       src: traefik-rules-file.j2
-      dest: "/mnt/shared_data/{{ vm_name_nt }}.yml"
+      dest: "/mnt/shared_data/{{ vm_name }}.yml"
       owner: nikola
       mode: '0744'
