@@ -116,7 +116,7 @@
       state: present
       update_cache: Yes
     when: 
-      - ansible_facts['distribution'] == "CentOS"
+      - ansible_distribution == "CentOS"
 
   - name: Install Cockpit
     apt: 
@@ -124,7 +124,13 @@
       state: present
       update_cache: Yes
     when: 
-      - ansible_facts['distribution'] == "Ubuntu" or "Debian"
+      - ansible_distribution == "Ubuntu"
+
+  - name: Enable Cockpit
+    systemd:
+      name: cockpit
+      enabled: Yes
+      state: started
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
