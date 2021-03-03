@@ -89,12 +89,14 @@
   - add_host:
       name: '{{ _ip_parse | first }}'
       groups: "playground"
+      remote_user: "{{ initial_setup_user }}"
+      ansible_ssh_pass: "{{ initial_setup_password }}"
 
 - name: Setup host for ansible
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
   gather_facts: no
   become: Yes
-  become_user: tatux
+  become_user: "{{ initial_setup_user }}"
   vars_files:
     - vault_vars.yml
     - vars.yml
@@ -105,7 +107,7 @@
     wait_for_connection:
       delay: 60
       sleep: 5
-      
+
   - name: Gathering facts
     setup:
 
