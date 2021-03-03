@@ -1,6 +1,7 @@
 ---
 - name: test paths
   hosts: 127.0.0.1
+  become: Yes
   tasks:
   - name: Paths
     find:
