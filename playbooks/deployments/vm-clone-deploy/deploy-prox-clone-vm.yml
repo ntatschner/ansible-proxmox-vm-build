@@ -101,7 +101,7 @@
       state: present
       update_cache: Yes
     register: _app_wait
-    until: _app_wait.stdout != 
+    until: _app_wait.msg != "yum lockfile is held by another process"
     when: 
       - ansible_distribution == "CentOS"
 
@@ -117,7 +117,7 @@
     systemd:
       name: cockpit
       enabled: Yes
-      state: started
+      state: restarted
 
   - name: Add Ansible SSH group
     group:
