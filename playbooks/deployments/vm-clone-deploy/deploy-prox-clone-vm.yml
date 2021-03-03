@@ -92,7 +92,7 @@
 
 - name: Setup host for ansible
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
-  gather_facts: yes
+  gather_facts: no
   become: Yes
   become_user: tatux
   vars_files:
@@ -105,6 +105,9 @@
     wait_for_connection:
       delay: 60
       sleep: 5
+      
+  - name: Gathering facts
+    setup:
 
   - name: "Set job identifiers"
     set_fact: 
