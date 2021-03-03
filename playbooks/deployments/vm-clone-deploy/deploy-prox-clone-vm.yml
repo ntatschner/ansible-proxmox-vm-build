@@ -92,6 +92,10 @@
       delay: 10
       sleep: 5
 
+- name: Disable SELinux
+  selinux:
+    state: disabled
+
   - name: Gathering facts
     setup:
 
