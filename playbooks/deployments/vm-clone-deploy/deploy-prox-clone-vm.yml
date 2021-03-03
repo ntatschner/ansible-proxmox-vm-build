@@ -94,7 +94,7 @@
       groups: "playground"
 
 
-- name: Setup host for ansible
+- name: Setup host for external access
   hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
   gather_facts: no
   become: Yes
@@ -102,11 +102,11 @@
     - vault_vars.yml
     - vars.yml
   vars:
-    vm_name_nt: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
+    vm_name: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
   tasks:
   - name: Wait for SSH to be ready (Max 10 minutes)
     wait_for_connection:
-      delay: 60
+      delay: 10
       sleep: 5
 
   - name: Gathering facts

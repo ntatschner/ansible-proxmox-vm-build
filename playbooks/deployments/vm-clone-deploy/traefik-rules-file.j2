@@ -1,17 +1,17 @@
 ---
 http:
   routers:
-    "{{ vm_name_nt }}"-rtr:
-      rule: "HostHeader(`"{{ vm_name_nt }}".tatux.in`)" 
+    "{{ vm_name }}"-rtr:
+      rule: "HostHeader(`"{{ vm_name }}".tatux.in`)" 
       entryPoints:
         - https
       middlewares:
         - chain-no-auth
-      service: "{{ vm_name_nt }}"-svc
+      service: "{{ vm_name }}"-svc
       tls:
         certResolver: dns-cloudflare
   services:
-    "{{ vm_name_nt }}"-svc:
+    "{{ vm_name }}"-svc:
       loadBalancer:
         passHostHeader: true
         servers:
