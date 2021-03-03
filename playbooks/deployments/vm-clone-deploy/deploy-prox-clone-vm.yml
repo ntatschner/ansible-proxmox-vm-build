@@ -101,8 +101,6 @@
   vars_files:
     - vault_vars.yml
     - vars.yml
-  vars:
-    vm_name: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
   tasks:
   - name: Wait for SSH to be ready (Max 10 minutes)
     wait_for_connection:
@@ -137,6 +135,8 @@
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
   become: Yes
+  vars:
+  vm_name: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
   tasks:
   - name: Creating inbound rules for Traefik Proxy
     template:
