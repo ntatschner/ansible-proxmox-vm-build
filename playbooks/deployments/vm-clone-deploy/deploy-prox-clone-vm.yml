@@ -106,6 +106,8 @@
       update_cache: Yes
     register: _app_wait
     until: _app_wait.msg != "yum lockfile is held by another process"
+    retries: 40
+    delay: 20
     when: 
       - ansible_distribution == "CentOS"
 
