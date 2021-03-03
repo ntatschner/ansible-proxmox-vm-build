@@ -99,6 +99,7 @@
     yum: 
       name: cockpit
       state: present
+      lock_timeout: 120
       update_cache: Yes
     when: 
       - ansible_distribution == "CentOS"
@@ -169,4 +170,4 @@
   - name: Creating inbound rules for Traefik Proxy
     template:
       src: traefik-rules-file.j2
-      dest: "/mnt/shared_data/{{ VM_name }}.yml"
+      dest: "/mnt/shared_data/{{ tower_user_name }}.yml"
