@@ -76,11 +76,6 @@
     vars:
       regexp: 'vmid = (\d*)'
 
-  - name: Wait for SSH to be ready (Max 10 minutes)
-    wait_for_connection:
-      delay: 60
-      sleep: 5
-
   - name: get IP
     shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
     become: True
@@ -106,6 +101,11 @@
   vars:
     ansible_become_pass: "{{ initial_setup_password }}"
   tasks:
+  - name: Wait for SSH to be ready (Max 10 minutes)
+    wait_for_connection:
+      delay: 60
+      sleep: 5
+
   - name: "Set job identifiers"
     set_fact: 
       template_name: "{{ tower_job_template_name | default('NaN') }}"
