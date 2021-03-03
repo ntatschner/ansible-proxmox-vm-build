@@ -8,7 +8,7 @@
       paths: /mnt/shared_data
       recurse: Yes
     register: _files
-    
+
   - name: Debug
     debug:
       var: _files
@@ -111,18 +111,18 @@
     setup:
 
   - name: Install Cockpit
-    apt: 
-      name: cockpit
-      state: present
-      update_cache: Yes
-    when: ansible_facts['distribution'] == "Ubuntu" or "Debian"
-
-  - name: Install Cockpit
     dnf: 
       name: cockpit
       state: present
       update_cache: Yes
     when: ansible_facts['distribution'] == "CentOS"
+
+  - name: Install Cockpit
+    apt: 
+      name: cockpit
+      state: present
+      update_cache: Yes
+    when: ansible_facts['distribution'] == "Ubuntu" or "Debian"
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
