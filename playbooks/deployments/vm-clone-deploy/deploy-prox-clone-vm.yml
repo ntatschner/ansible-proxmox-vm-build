@@ -136,7 +136,7 @@
   hosts: 127.0.0.1
   become: Yes
   vars:
-  vm_name: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
+    vm_name: "{{ hostvars['192.168.0.250']['vm_name_nt'] }}"
   tasks:
   - name: Creating inbound rules for Traefik Proxy
     template:
