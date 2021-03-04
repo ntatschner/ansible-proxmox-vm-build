@@ -1,6 +1,6 @@
 Hey {{ tower_user_first_name }},
 
-Your VM has been {{ tower_user_name }} created,
+Your VM "{{ tower_user_name }}" has been created,
 
 Here are the details;
 
@@ -8,6 +8,10 @@ Username: {{ tower_user_name }}
 
 IP address: {{ _ip_address | join(', ') }}
 External Management URL: https://{{ tower_user_name }}.tatux.in
+    Please be aware, there are some issues with Chrome, FireFox seems to work OK.
+Password: "Set on template request" - See me for default if not set.
+
+Rebuilt: {{ _awx_rebuild }}
 
 Kind Regards,
 

@@ -6,6 +6,17 @@
     - vault_vars.yml
     - vars.yml
   tasks:
+  - name: Check if rebuild
+    proxmox_kvm:
+      api_user: "{{ vault_proxmox_user }}"
+      api_password: "{{ vault_api_password }}"
+      api_host: "TheIntersect"
+      name: "{{ tower_user_name }}"
+      node: "TheIntersect"
+      state: absent
+    ignore_errors: True
+    when: _awx_rebuild == "Yes"
+
   # Clone New VM from template in Proxmox
   - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ tower_user_name }}"
     proxmox_kvm:
@@ -99,7 +110,21 @@
   - name: Gathering facts
     setup:
 
-  - name: Install Cockpit
+- name: Set hostname
+  hostname:
+    name: "{{ tower_user_name }}"
+
+- name: "Configuring eth"
+  nmcli:
+    conn_name: "System eth0"
+    ifname: eth0
+    type: ethernet
+    state: present
+    autoconnect: yes
+    ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+    gw4: "192.168.0.1"
+
+  - name: Install packages
     yum: 
       name: cockpit
       state: present
@@ -108,6 +133,8 @@
     until: _app_wait.msg != "yum lockfile is held by another process"
     retries: 40
     delay: 20
+    with_items:
+      - cockpit
     when: 
       - ansible_distribution == "CentOS"
 
@@ -119,11 +146,14 @@
     when: 
       - ansible_distribution == "Ubuntu"
 
-  - name: Enable Cockpit
+  - name: Enable Services
     systemd:
-      name: cockpit.socket
+      name: 
       enabled: Yes
       state: started
+    with_item:
+     - cockpit.socket
+     - NetworkManager
 
   - name: Edit Cockpit config - Origin
     ini_file:
