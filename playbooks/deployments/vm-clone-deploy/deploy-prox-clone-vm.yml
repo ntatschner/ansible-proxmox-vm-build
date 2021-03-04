@@ -235,4 +235,4 @@
       subject: "VM Management Alerts"
       body: "{{ lookup('template', 'email-template.j2') }}"
     delegate_to: localhost
-    no_log: true
+    #no_log: true
