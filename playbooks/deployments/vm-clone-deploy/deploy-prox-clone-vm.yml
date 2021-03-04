@@ -6,7 +6,18 @@
     - vault_vars.yml
     - vars.yml
   tasks:
-  - name: Check if rebuild
+  - name: Rebuild prep - Stop
+    proxmox_kvm:
+      api_user: "{{ vault_proxmox_user }}"
+      api_password: "{{ vault_api_password }}"
+      api_host: "TheIntersect"
+      name: "{{ tower_user_name }}"
+      node: "TheIntersect"
+      state: stopped
+    ignore_errors: True
+    when: _awx_rebuild == "Yes"
+
+  - name: Rebuild Prep
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
