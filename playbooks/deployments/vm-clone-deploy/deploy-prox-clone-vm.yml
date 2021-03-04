@@ -121,7 +121,7 @@
       type: ethernet
       state: present
       autoconnect: yes
-      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] | join(', ') }}"
       gw4: "192.168.0.1"
 
   - name: Install packages
