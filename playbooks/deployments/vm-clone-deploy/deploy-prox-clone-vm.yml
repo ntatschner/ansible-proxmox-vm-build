@@ -97,6 +97,9 @@
     shell: "/usr/sbin/qm guest cmd {{ _vmid }} network-get-interfaces"
     become: True
     register: _output_vm_ip
+    until: _output_vm_ip.stderr != "QEMU guest agent is not running"
+    retries: 30
+    delay: 10
 
   - set_fact:
       _ip_parse: "{{ _output_vm_ip.stdout | regex_findall(regexp,'\\1') | reject('search', '127.0.0.1') | list }}"
