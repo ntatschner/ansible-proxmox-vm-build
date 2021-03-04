@@ -151,7 +151,7 @@
       name: "{{ item }}"
       enabled: Yes
       state: started
-    with_item:
+    with_items:
      - cockpit.socket
      - NetworkManager
 
