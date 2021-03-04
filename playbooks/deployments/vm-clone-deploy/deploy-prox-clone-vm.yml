@@ -151,11 +151,6 @@
       update_cache: Yes
     with_items:
       - cockpit
-      - NetworkManager-glib
-      - nm-connection-editor.x86_64
-      - libsemanage-python
-      - policycoreutils-python
-      - libselinux-python
     when: 
       - ansible_distribution == "Ubuntu"
 
