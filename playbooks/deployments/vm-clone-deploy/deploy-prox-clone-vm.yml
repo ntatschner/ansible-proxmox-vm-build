@@ -206,6 +206,9 @@
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
   become: Yes
+  vars_files:
+  - vault_vars.yml
+  - vars.yml
   tasks:
   - name: Create NFS user
     user:
