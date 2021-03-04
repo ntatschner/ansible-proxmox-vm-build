@@ -148,7 +148,7 @@
 
   - name: Enable Services
     systemd:
-      name: 
+      name: "{{ item }}"
       enabled: Yes
       state: started
     with_item:
