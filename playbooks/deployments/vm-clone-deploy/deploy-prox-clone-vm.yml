@@ -110,19 +110,19 @@
   - name: Gathering facts
     setup:
 
-- name: Set hostname
-  hostname:
-    name: "{{ tower_user_name }}"
+  - name: Set hostname
+    hostname:
+      name: "{{ tower_user_name }}"
 
-- name: "Configuring eth"
-  nmcli:
-    conn_name: "System eth0"
-    ifname: eth0
-    type: ethernet
-    state: present
-    autoconnect: yes
-    ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
-    gw4: "192.168.0.1"
+  - name: "Configuring eth"
+    nmcli:
+      conn_name: "System eth0"
+      ifname: eth0
+      type: ethernet
+      state: present
+      autoconnect: yes
+      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+      gw4: "192.168.0.1"
 
   - name: Install packages
     yum: 
