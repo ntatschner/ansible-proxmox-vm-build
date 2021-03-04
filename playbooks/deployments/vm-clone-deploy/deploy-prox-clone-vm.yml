@@ -28,6 +28,11 @@
     ignore_errors: True
     when: _awx_rebuild == "Yes"
 
+  - name: Wait for Removal processes to finish
+    wait_for:
+      timeout: 5
+    when: _awx_rebuild == "Yes"
+
   # Clone New VM from template in Proxmox
   - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ tower_user_name }}"
     proxmox_kvm:
