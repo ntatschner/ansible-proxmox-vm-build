@@ -151,7 +151,6 @@
       update_cache: Yes
     with_items:
       - cockpit
-      - python-selinux
     when: 
       - ansible_distribution == "Ubuntu"
 
