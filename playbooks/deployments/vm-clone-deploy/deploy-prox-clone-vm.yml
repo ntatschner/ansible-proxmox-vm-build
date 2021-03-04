@@ -131,16 +131,6 @@
     hostname:
       name: "{{ tower_user_name }}"
 
-  - name: "Configuring eth"
-    nmcli:
-      conn_name: "System eth0"
-      ifname: eth0
-      type: ethernet
-      state: present
-      autoconnect: yes
-      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] | join(', ') }}"
-      gw4: "192.168.0.1"
-
   - name: Install packages
     yum: 
       name: "{{ item }}"
@@ -259,6 +249,16 @@
       mode: 0440
       create: yes
       validate: 'visudo -cf %s'
+      
+  - name: "Configuring eth"
+    nmcli:
+      conn_name: "System eth0"
+      ifname: eth0
+      type: ethernet
+      state: present
+      autoconnect: yes
+      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] | join(', ') }}"
+      gw4: "192.168.0.1"
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
