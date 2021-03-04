@@ -144,14 +144,14 @@
     when: 
       - ansible_distribution == "CentOS"
 
-  - name: Install Cockpit
+  - name: Install packages
     apt: 
       name: "{{ item }}"
       state: present
       update_cache: Yes
     with_items:
       - cockpit
-      - libselinux-python
+      - python-selinux
     when: 
       - ansible_distribution == "Ubuntu"
 
