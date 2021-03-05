@@ -11,7 +11,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
       node: "TheIntersect"
       state: stopped
     ignore_errors: True
@@ -22,7 +22,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
       node: "TheIntersect"
       state: absent
     ignore_errors: True
@@ -34,12 +34,12 @@
     when: _awx_rebuild == "Yes"
 
   # Clone New VM from template in Proxmox
-  - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ tower_user_name }}"
+  - name: Cloning virtual machine from "{{ VM_template }}" with name "{{ servername }}"
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
       node: "TheIntersect"
       storage: "biglocal"
       ostype: "l26"
@@ -47,7 +47,7 @@
       onboot: Yes
       localtime: Yes
       agent: Yes
-      description: "Created With Ansible on: {{ ansible_date_time }} by: {{ tower_user_name }}."
+      description: "Created With Ansible on: {{ ansible_date_time }} by: {{ servername }}."
       pool: "Playground"
       clone: "{{ VM_template }}"
       timeout: 300
@@ -63,7 +63,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
       node: "TheIntersect"
       state: started
       pool: "Playground"
@@ -82,7 +82,7 @@
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
       api_host: "TheIntersect"
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
       node: "TheIntersect"
       state: current
     register: _current_state
@@ -170,7 +170,7 @@
       path: /etc/cockpit/cockpit.conf
       section: WebService
       option: Origins
-      value: "https://{{ tower_user_name }}.tatux.in wss://{{ tower_user_name }}.tatux.in"
+      value: "https://{{ servername }}.tatux.in wss://{{ servername }}.tatux.in"
 
   - name: Edit Cockpit config - ProtocolHeader
     ini_file:
@@ -207,7 +207,7 @@
 
   - name: Set hostname
     hostname:
-      name: "{{ tower_user_name }}"
+      name: "{{ servername }}"
 
   - name: Add Ansible SSH group
     group:
@@ -284,7 +284,7 @@
     become: Yes
     template:
       src: traefik-rules-file.j2
-      dest: "/mnt/shared_data/{{ tower_user_name }}.yml"
+      dest: "/mnt/shared_data/{{ servername }}.yml"
       mode: 0760
 
   - name: "Email VM details"

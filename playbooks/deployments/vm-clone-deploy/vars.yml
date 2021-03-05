@@ -18,3 +18,4 @@ smtp_username: awx_notifier@tatux.co.uk
 smtp_from: awx_notifier@tatux.co.uk
 smtp_port: 587
 smtp_password: "{{ vault_smtp_password }}"
+servername: "{{ tower_user_name }}{{ VM_template.split("-")[0] | lower }}"
