@@ -152,6 +152,7 @@
     with_items:
       - cockpit
       - network-manager
+      - python-gi
     when: 
       - ansible_distribution == "Ubuntu"
 
