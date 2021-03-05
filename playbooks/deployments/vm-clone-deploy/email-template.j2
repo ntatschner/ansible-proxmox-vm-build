@@ -1,13 +1,13 @@
 Hey {{ tower_user_first_name }},
 
-Your VM "{{ tower_user_name }}" has been created,
+Your VM "{{ servername }}" has been created,
 
 Here are the details;
 
 Username: {{ tower_user_name }}
 
 IP address: {{ _ip_address | join(', ') }}
-External Management URL: https://{{ tower_user_name }}.tatux.in
+External Management URL: https://{{ servername }}.tatux.in
     Please be aware, there are some issues with Chrome, FireFox seems to work OK.
 Password: "Set on template request" - See me for default if not set.
 

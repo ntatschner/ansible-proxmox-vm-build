@@ -1,16 +1,16 @@
 http:
   routers:
-    {{ tower_user_name }}-rtr:
-      rule: "HostHeader(`{{ tower_user_name }}.tatux.in`)" 
+    {{ servername }}-rtr:
+      rule: "HostHeader(`{{ servername }}.tatux.in`)" 
       entryPoints:
         - https
       middlewares:
         - chain-no-auth
-      service: {{ tower_user_name }}-svc
+      service: {{ servername }}-svc
       tls:
         certResolver: dns-cloudflare
   services:
-    {{ tower_user_name }}-svc:
+    {{ servername }}-svc:
       loadBalancer:
         passHostHeader: true
         servers:
