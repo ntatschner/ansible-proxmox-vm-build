@@ -252,6 +252,23 @@
       mode: 0440
       create: yes
       validate: 'visudo -cf %s'
+
+  - name: Add management user
+    user:
+      name: tatux
+      comment: "Admin user"
+      group: "{{ remote_ansible_group }}"
+      password: "{{ vaulted_management_user_password | password_hash('sha512') }}"
+      state: present
+
+  - name: Add management user to sudoers in the /etc/sudoers.d/ directory
+    lineinfile:
+      path: "/etc/sudoers.d/tatux"
+      line: 'tatux ALL=(ALL) NOPASSWD: ALL'
+      state: present
+      mode: 0440
+      create: yes
+      validate: 'visudo -cf %s'
       
   - name: "Configuring eth"
     nmcli:
@@ -293,8 +310,7 @@
       username: "{{ smtp_username }}"
       password: "{{ smtp_password }}"
       port: "{{ smtp_port }}"
-      to: "{{ tower_user_email }}"
-      bcc: "Nigel@tatux.co.uk"
+      to: "{{ _awx_email_address }}"
       from: "{{ smtp_username }}"
       subject: "VM Management Alerts"
       body: "{{ lookup('template', 'email-template.j2') }}"
