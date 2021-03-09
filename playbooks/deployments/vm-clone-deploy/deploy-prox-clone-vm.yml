@@ -255,7 +255,7 @@
 
   - name: Add management user
     user:
-      name: tatux
+      name: mguser
       comment: "Admin user"
       group: "{{ remote_ansible_group }}"
       password: "{{ vaulted_management_user_password | password_hash('sha512') }}"
@@ -263,8 +263,8 @@
 
   - name: Add management user to sudoers in the /etc/sudoers.d/ directory
     lineinfile:
-      path: "/etc/sudoers.d/tatux"
-      line: 'tatux ALL=(ALL) NOPASSWD: ALL'
+      path: "/etc/sudoers.d/mguser"
+      line: 'mguser ALL=(ALL) NOPASSWD: ALL'
       state: present
       mode: 0440
       create: yes
