@@ -9,7 +9,12 @@ vault_proxmox_user: "{{ proxmox_user }}"
 vault_proxmox_token_id: "{{ proxmox_token_id }}"
 vault_proxmox_api_key: "{{ proxmox_api_key }}"
 vault_api_password: "{{ api_password }}"
+api_hostname: "TheIntersect"
+proxmox_node_name: "TheIntersect"
+proxmox_storage: "biglocal"
 proxmox_host: 192.168.0.250
+proxmox_pool: "Playground"
+external_gateway: 192.168.0.1
 initial_setup_user: tatux
 initial_setup_password: "{{ setup_password }}"
 remote_ansible_group: ansiblessh
