@@ -1,6 +1,6 @@
 ---
 - name: Deploy a new VM in Proxmox from a clone
-  hosts: 192.168.0.250
+  hosts: "{{ hostgroup | default('proxmox_host') }}"
   gather_facts: yes
   vars_files:
     - vault_vars.yml
@@ -10,9 +10,9 @@
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
-      api_host: "TheIntersect"
+      api_host: "{{ api_hostname }}"
       name: "{{ servername }}"
-      node: "TheIntersect"
+      node: "{{ proxmox_node_name }}"
       state: stopped
     ignore_errors: True
     when: _awx_rebuild == "Yes"
@@ -21,9 +21,9 @@
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
-      api_host: "TheIntersect"
+      api_host: "{{ api_hostname }}"
       name: "{{ servername }}"
-      node: "TheIntersect"
+      node: "{{ proxmox_node_name }}"
       state: absent
     ignore_errors: True
     when: _awx_rebuild == "Yes"
@@ -38,17 +38,17 @@
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
-      api_host: "TheIntersect"
+      api_host: "{{ api_hostname }}"
       name: "{{ servername }}"
-      node: "TheIntersect"
-      storage: "biglocal"
+      node: "{{ proxmox_node_name }}"
+      storage: "{{ proxmox_storage }}"
       ostype: "l26"
       balloon: "1024"
       onboot: Yes
       localtime: Yes
       agent: Yes
       description: "Created With Ansible on: {{ ansible_date_time }} by: {{ servername }}."
-      pool: "Playground"
+      pool: "{{ proxmox_pool }}"
       clone: "{{ VM_template }}"
       timeout: 300
     tags: provision,test
@@ -62,11 +62,11 @@
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
-      api_host: "TheIntersect"
+      api_host: "{{ api_hostname }}"
       name: "{{ servername }}"
-      node: "TheIntersect"
+      node: "{{ proxmox_node_name }}"
       state: started
-      pool: "Playground"
+      pool: "{{ proxmox_pool }}"
       timeout: 300
     register: wait
     tags: provision
@@ -81,9 +81,9 @@
     proxmox_kvm:
       api_user: "{{ vault_proxmox_user }}"
       api_password: "{{ vault_api_password }}"
-      api_host: "TheIntersect"
+      api_host: "{{ api_hostname }}"
       name: "{{ servername }}"
-      node: "TheIntersect"
+      node: "{{ proxmox_node_name }}"
       state: current
     register: _current_state
 
@@ -108,10 +108,10 @@
 
   - add_host:
       name: '{{ _ip_parse | first }}'
-      groups: "playground"
+      groups: "{{ proxmox_pool }}"
 
 - name: Setup host for external access
-  hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
+  hosts: "{{ hostvars['proxmox_host']['_ip_parse'] }}"
   gather_facts: no
   become: Yes
   vars_files:
@@ -277,8 +277,8 @@
       type: ethernet
       state: present
       autoconnect: yes
-      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] | join(', ') }}"
-      gw4: "192.168.0.1"
+      ip4: "{{ hostvars['proxmox_host']['_ip_parse'] | join(', ') }}"
+      gw4: "{{ external_gateway }}"
 
 - name: Configure access to new VM via Traefik
   hosts: 127.0.0.1
@@ -295,7 +295,7 @@
 
   - name: Template IP output
     set_fact:
-      _ip_address: "{{ hostvars['192.168.0.250']._ip_parse }}"
+      _ip_address: "{{ hostvars['proxmox_host']._ip_parse }}"
 
   - name: Creating inbound rules for Traefik Proxy
     become: Yes
@@ -310,7 +310,8 @@
       username: "{{ smtp_username }}"
       password: "{{ smtp_password }}"
       port: "{{ smtp_port }}"
-      to: "{{ _awx_email_address }}"
+      to: "{{ tower_user_email }}"
+      bcc: ""
       from: "{{ smtp_username }}"
       subject: "VM Management Alerts"
       body: "{{ lookup('template', 'email-template.j2') }}"
