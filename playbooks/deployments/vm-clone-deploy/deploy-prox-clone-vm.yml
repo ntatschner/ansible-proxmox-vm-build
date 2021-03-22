@@ -1,6 +1,6 @@
 ---
 - name: Deploy a new VM in Proxmox from a clone
-  hosts: "{{ hostgroup | default('proxmox_host') }}"
+  hosts: "{{ hostgroup | default('192.168.0.250') }}"
   gather_facts: yes
   vars_files:
     - vault_vars.yml
@@ -111,7 +111,7 @@
       groups: "{{ proxmox_pool }}"
 
 - name: Setup host for external access
-  hosts: "{{ hostvars['proxmox_host']['_ip_parse'] }}"
+  hosts: "{{ hostvars['192.168.0.250']['_ip_parse'] }}"
   gather_facts: no
   become: Yes
   vars_files:
@@ -277,7 +277,7 @@
       type: ethernet
       state: present
       autoconnect: yes
-      ip4: "{{ hostvars['proxmox_host']['_ip_parse'] | join(', ') }}"
+      ip4: "{{ hostvars['192.168.0.250']['_ip_parse'] | join(', ') }}"
       gw4: "{{ external_gateway }}"
 
 - name: Configure access to new VM via Traefik
@@ -295,7 +295,7 @@
 
   - name: Template IP output
     set_fact:
-      _ip_address: "{{ hostvars['proxmox_host']._ip_parse }}"
+      _ip_address: "{{ hostvars['192.168.0.250']._ip_parse }}"
 
   - name: Creating inbound rules for Traefik Proxy
     become: Yes
